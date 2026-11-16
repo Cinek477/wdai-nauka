@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ściąga CSS — WDAI nauka</title>
+    <meta name="description" content="Selektory, właściwości, jednostki i reguły CSS w jednym miejscu: co robią, przykład i podgląd." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/core.js" defer></script>
+    <script src="js/data/m1.js" defer></script>
+    <script src="js/data/m2.js" defer></script>
+    <script src="js/data/m3.js" defer></script>
+    <script src="js/data/m4.js" defer></script>
+    <script src="js/data/m6.js" defer></script>
+    <script src="js/data/m7.js" defer></script>
+    <script src="js/data/l3.js" defer></script>
+    <script src="js/data/ref-css.js" defer></script>
+    <script src="js/pages/sciaga.js" defer></script>
+  </head>
+  <body data-page="sciaga-css" data-ref="css">
+    <div class="page">
+      <header class="site-header" id="site-header"></header>
+      <nav class="site-nav" id="site-nav" aria-label="Główna nawigacja"></nav>
+      <main class="site-main" id="main">
+        <div class="container" style="max-width:1100px">
+          <nav class="switch" aria-label="Wybór ściągi">
+            <a href="sciaga.html">HTML</a>
+            <a href="sciaga-css.html" aria-current="page">CSS</a>
+          </nav>
+          <div class="row" data-tech="css">
+            <span class="tag">CSS</span>
+            <h1>Ściąga CSS</h1>
+          </div>
+          <p class="muted">Selektory, właściwości, wartości, jednostki i reguły @ w jednym miejscu: co robią, przykład z kolorowaniem i podgląd na żywo na małym kawałku HTML.
+            Szczegóły i ćwiczenia: <a href="modul.html?id=m3">M3 CSS podstawy</a> i <a href="modul.html?id=m4">M4 Layout i RWD</a>.</p>
+
+          <div class="ref-toolbar card">
+            <div class="row">
+              <label for="ref-q" class="sr-only">Szukaj w ściądze CSS</label>
+              <input id="ref-q" type="search" placeholder="Szukaj: flex, margin, hover, grid, rem…" style="flex:1;min-width:200px" />
+              <span class="muted" id="ref-count" aria-live="polite"></span>
+            </div>
+            <div class="row" role="group" aria-label="Rodzaj" id="ref-kinds"></div>
+            <nav class="row ref-cats" aria-label="Kategorie" id="ref-cats"></nav>
+          </div>
+
+          <div id="ref-list" style="display:flex;flex-direction:column;gap:28px"></div>
+        </div>
+      </main>
+      <footer class="site-footer">WDAI — nauka · 2026/27 · Opisy na podstawie MDN</footer>
+    </div>
+  </body>
+</html>

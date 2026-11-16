@@ -20,12 +20,16 @@
     <script src="js/data/ref-html.js" defer></script>
     <script src="js/pages/sciaga.js" defer></script>
   </head>
-  <body data-page="sciaga-html">
+  <body data-page="sciaga-html" data-ref="html">
     <div class="page">
       <header class="site-header" id="site-header"></header>
       <nav class="site-nav" id="site-nav" aria-label="Główna nawigacja"></nav>
       <main class="site-main" id="main">
         <div class="container" style="max-width:1100px">
+          <nav class="switch" aria-label="Wybór ściągi">
+            <a href="sciaga.html" aria-current="page">HTML</a>
+            <a href="sciaga-css.html">CSS</a>
+          </nav>
           <div class="row" data-tech="html">
             <span class="tag">HTML</span>
             <h1>Ściąga HTML</h1>
@@ -39,14 +43,7 @@
               <input id="ref-q" type="search" placeholder="Szukaj: img, formularz, tabela, alt…" style="flex:1;min-width:200px" />
               <span class="muted" id="ref-count" aria-live="polite"></span>
             </div>
-            <div class="row" role="group" aria-label="Rodzaj elementu" id="ref-kinds">
-              <button class="chip" aria-pressed="true" data-kind="all">Wszystkie</button>
-              <button class="chip" aria-pressed="false" data-kind="blok">Blokowe</button>
-              <button class="chip" aria-pressed="false" data-kind="linia">Liniowe</button>
-              <button class="chip" aria-pressed="false" data-kind="pusty">Puste (bez zamknięcia)</button>
-              <button class="chip" aria-pressed="false" data-kind="head">Tylko w &lt;head&gt;</button>
-              <button class="chip" aria-pressed="false" data-kind="atrybut">Atrybuty i encje</button>
-            </div>
+            <div class="row" role="group" aria-label="Rodzaj elementu" id="ref-kinds"></div>
             <nav class="row ref-cats" aria-label="Kategorie" id="ref-cats"></nav>
           </div>
 

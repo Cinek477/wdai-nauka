@@ -1,48 +1,78 @@
-/* Ściąga HTML: lista znaczników z wyszukiwarką, filtrem rodzaju i podglądem */
+/* Ściągi HTML i CSS — wspólny skrypt.
+   Którą ściągę pokazać, mówi <body data-ref="html|css">. */
 WDAI.ready(() => {
   const W = WDAI;
-  const data = W.refHtml;
-  const list = W.$("#ref-list");
-  const KIND = {
-    blok: "blokowy",
-    linia: "liniowy",
-    pusty: "pusty — bez zamknięcia",
-    head: "w <head>",
-    atrybut: "atrybut / składnia",
+  const type = document.body.dataset.ref === "css" ? "css" : "html";
+
+  const CONFIG = {
+    html: {
+      data: W.refHtml,
+      lang: "html",
+      kinds: {
+        blok: "blokowy",
+        linia: "liniowy",
+        pusty: "pusty — bez zamknięcia",
+        head: "w <head>",
+        atrybut: "atrybut / składnia",
+      },
+      chips: [["blok", "Blokowe"], ["linia", "Liniowe"], ["pusty", "Puste (bez zamknięcia)"], ["head", "Tylko w <head>"], ["atrybut", "Atrybuty i encje"]],
+      doc: (it) => it.example,
+    },
+    css: {
+      data: W.refCss,
+      lang: "css",
+      kinds: {
+        selektor: "selektor",
+        wlasciwosc: "właściwość",
+        wartosc: "wartość / funkcja",
+        regula: "reguła @ / kaskada",
+        jednostka: "jednostka",
+      },
+      chips: [["selektor", "Selektory"], ["wlasciwosc", "Właściwości"], ["wartosc", "Wartości i funkcje"], ["regula", "Reguły @"], ["jednostka", "Jednostki"]],
+      // .b = szare pudełko używane w przykładach
+      doc: (it) => `<style>.b{background:#e3f1ef;border:1px solid #2a9d8f;padding:6px 10px;border-radius:4px}</style><style>${it.example}</style>${it.html || ""}`,
+    },
   };
+  const cfg = CONFIG[type];
+  const list = W.$("#ref-list");
   const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "el";
 
-  // płaska lista z kategorią i tekstem do wyszukiwania
-  const items = data.flatMap((cat) => cat.items.map((it, i) => ({
+  const items = cfg.data.flatMap((cat) => cat.items.map((it, i) => ({
     ...it,
     cat,
     key: `${cat.id}-${i}`,
-    anchor: `${cat.id}-${slug(it.tag)}`,
+    anchor: `${cat.id}-${slug(it.tag)}-${i}`,
     hay: `${it.tag} ${it.desc} ${(it.attrs || []).join(" ")} ${cat.title}`.toLowerCase(),
   })));
 
-  W.$("#ref-cats").innerHTML = data.map((c) => `<a class="chip" href="#cat-${c.id}">${W.esc(c.title)}</a>`).join("");
+  /* --- filtry rodzaju i kategorie --- */
+  W.$("#ref-kinds").innerHTML = `<span class="muted ref-label">Rodzaj:</span><button class="chip" aria-pressed="true" data-kind="all">Wszystkie</button>` +
+    cfg.chips.map(([k, label]) => `<button class="chip" aria-pressed="false" data-kind="${k}">${W.esc(label)}</button>`).join("");
+  W.$("#ref-cats").innerHTML = `<span class="muted ref-label">Przejdź do:</span>` +
+    cfg.data.map((c) => `<a class="chip chip-link" href="#cat-${c.id}">${W.esc(c.title)}</a>`).join("");
 
+  /* --- lista --- */
   const itemHtml = (it) => `
-    <article class="ref-item card" id="${it.anchor}" data-key="${it.key}">
+    <article class="ref-item card ref-${type}" id="${it.anchor}" data-key="${it.key}">
       <div class="ref-info">
         <div class="row" style="gap:8px">
           <h3 class="ref-tag"><code>${W.esc(it.tag)}</code></h3>
-          <span class="kind kind-${it.kind}">${W.esc(KIND[it.kind])}</span>
+          <span class="kind kind-${it.kind}">${W.esc(cfg.kinds[it.kind])}</span>
         </div>
         <p>${W.fmt(it.desc)}</p>
         ${it.attrs ? `<p class="ref-attrs"><span class="muted">Atrybuty:</span> ${it.attrs.map((a) => `<code>${W.esc(a)}</code>`).join(" ")}</p>` : ""}
       </div>
       <div class="ref-code">
         <div class="syntax">
-          <div class="syntax-head"><span class="lang">html</span><button class="btn btn-sm spacer" data-copy="${it.key}">Kopiuj</button></div>
-          ${W.codeBlock(it.example, "html")}
+          <div class="syntax-head"><span class="lang">${cfg.lang}</span><button class="btn btn-sm spacer" data-copy="${it.key}">Kopiuj</button></div>
+          ${W.codeBlock(it.example, cfg.lang)}
+          ${type === "css" && it.html && it.preview !== false ? `<details class="ref-html"><summary>HTML przykładu</summary>${W.codeBlock(it.html, "html")}</details>` : ""}
         </div>
         ${it.preview === false ? "" : `<details class="ref-preview" data-preview="${it.key}"><summary>Podgląd na żywo</summary></details>`}
       </div>
     </article>`;
 
-  list.innerHTML = data.map((cat) => `
+  list.innerHTML = cfg.data.map((cat) => `
     <section class="ref-cat" id="cat-${cat.id}" aria-labelledby="h-${cat.id}">
       <h2 id="h-${cat.id}">${W.esc(cat.title)}</h2>
       <p class="muted" style="margin:4px 0 14px">${W.fmt(cat.intro)}</p>
@@ -99,7 +129,7 @@ WDAI.ready(() => {
     frame.srcdoc = `<!doctype html><html lang="pl"><head><meta charset="utf-8"><style>
       body{font-family:system-ui,sans-serif;margin:12px;color:#1d1d1f;line-height:1.5}
       img,video,iframe{max-width:100%} table{border-collapse:collapse} td,th{padding:4px 8px}
-      input,select,textarea,button{font:inherit;margin:2px 0}</style></head><body>${it.example}</body></html>`;
+      input,select,textarea,button{font:inherit;margin:2px 0}</style></head><body>${cfg.doc(it)}</body></html>`;
     det.append(frame);
   }, true);
 

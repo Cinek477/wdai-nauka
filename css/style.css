@@ -518,3 +518,44 @@ details > *:not(summary) { margin-top: 8px; }
 .kind-pusty { background: var(--t-bs-soft); color: var(--t-bs); }
 .kind-head { background: var(--t-gen-soft); color: var(--t-gen); }
 .kind-atrybut { background: var(--t-server-soft); color: var(--t-server); }
+
+/* przełącznik ściąg HTML | CSS */
+.switch {
+  display: inline-flex; align-self: flex-start; padding: 4px; gap: 4px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px;
+}
+.switch a {
+  min-width: 80px; padding: 6px 18px; border-radius: 999px; text-align: center;
+  text-decoration: none; color: var(--muted); font-weight: 600;
+}
+.switch a:hover { color: var(--text); }
+.switch a[aria-current="page"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgb(0 0 0 / 12%); }
+
+.ref-css .ref-tag code { background: var(--t-css-soft); color: var(--t-css); }
+.ref-html summary, .ref-html { font-size: 0.85rem; }
+.ref-html { padding: 6px 12px; border-top: 1px solid var(--border); }
+.kind-selektor { background: var(--t-js-soft); color: var(--t-js); }
+.kind-wlasciwosc { background: var(--t-css-soft); color: var(--t-css); }
+.kind-wartosc { background: var(--t-bs-soft); color: var(--t-bs); }
+.kind-regula { background: var(--t-server-soft); color: var(--t-server); }
+.kind-jednostka { background: var(--t-html-soft); color: var(--t-html); }
+.ref-label { font-size: 0.85rem; min-width: 84px; }
+.chip-link { border-style: dashed; }
+
+/* ---------- 15. Podpowiedzi w edytorze ---------- */
+.ac-list {
+  position: absolute; z-index: 30; margin: 0; padding: 4px; list-style: none;
+  min-width: 260px; max-width: min(420px, 90%); max-height: 240px; overflow: auto;
+  background: #23262e; color: #e6e6e6; border: 1px solid #3a3f49; border-radius: 8px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 40%); font: 0.8rem var(--font);
+}
+.ac-list li {
+  display: grid; grid-template-columns: auto 1fr; gap: 0 10px; align-items: baseline;
+  padding: 5px 8px; border-radius: 6px; cursor: pointer;
+}
+.ac-list li[aria-selected="true"] { background: #1d5c54; }
+.ac-list code { background: none; padding: 0; color: #fff; font-size: 0.85rem; }
+.ac-kind { justify-self: end; color: #9aa0aa; font-size: 0.7rem; }
+.ac-desc { grid-column: 1 / -1; color: #b9bec7; font-size: 0.75rem; }
+.ac-list li:not([aria-selected="true"]) .ac-desc { display: none; }
+.pg-hints input { accent-color: var(--accent); }

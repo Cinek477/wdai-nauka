@@ -227,6 +227,7 @@ window.WDAI = window.WDAI || { modules: [] };
       ${link("index.html", "Start", page === "home")}
       <li class="nav-label">ŚCIĄGI</li>
       ${link("sciaga.html", "Ściąga HTML", page === "sciaga-html")}
+      ${link("sciaga-css.html", "Ściąga CSS", page === "sciaga-css")}
       <li class="nav-label">PRZEWODNIKI</li>${guides}
       <li class="nav-label">MODUŁY</li>${mods}
       <li class="nav-label">ĆWICZ</li>
@@ -305,6 +306,8 @@ ${files.js || ""}
       <div class="pg-tabs" role="tablist" aria-label="Pliki przykładu">
         ${tabs.map(([k, l]) => `<button role="tab" data-file="${k}" aria-selected="${k === active}">${l}</button>`).join("")}
         <span class="spacer muted" style="font-size:.8rem">${mode === "react" ? "React 18 + Babel" : mode === "bootstrap" ? "Bootstrap 5.3" : "HTML · CSS · JS"}</span>
+        ${W.enhanceEditor ? `<label class="row pg-hints" style="gap:4px;font-size:.8rem" title="Ctrl+Spacja — pokaż podpowiedzi; w HTML: skrót + Tab (np. p, div.card, li*3)">
+          <input type="checkbox" data-act="hints" ${localStorage.getItem("wdai:hints") === "off" ? "" : "checked"}> Podpowiedzi</label>` : ""}
         <button class="btn btn-sm" data-act="run">Uruchom ponownie</button>
         <button class="btn btn-sm" data-act="reset">Reset</button>
       </div>
@@ -347,14 +350,22 @@ ${files.js || ""}
       timer = setTimeout(run, 400);              // debounce: uruchom 400 ms po ostatnim znaku
     });
     ta.addEventListener("scroll", sync);
-    ta.addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && !e.shiftKey) {         // Tab wstawia 2 spacje
-        e.preventDefault();
-        const { selectionStart: s, selectionEnd: en } = ta;
-        ta.setRangeText("  ", s, en, "end");
-        ta.dispatchEvent(new Event("input"));
-      }
-    });
+    if (W.enhanceEditor) {
+      // podpowiedzi, Emmet i domykanie (js/editor.js)
+      W.enhanceEditor(ta, { getLang: () => langOf(active) });
+      el.addEventListener("change", (e) => {
+        if (e.target.matches('[data-act="hints"]')) W.setHintsEnabled(e.target.checked);
+      });
+    } else {
+      ta.addEventListener("keydown", (e) => {
+        if (e.key === "Tab" && !e.shiftKey) {       // Tab wstawia 2 spacje
+          e.preventDefault();
+          const { selectionStart: s, selectionEnd: en } = ta;
+          ta.setRangeText("  ", s, en, "end");
+          ta.dispatchEvent(new Event("input"));
+        }
+      });
+    }
     el.addEventListener("click", (e) => {
       const tab = e.target.closest('[role="tab"]');
       if (tab) show(tab.dataset.file);
