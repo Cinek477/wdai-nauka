@@ -1,0 +1,9 @@
+# lokalne ustawienia edytora i narzędzi
+.claude/
+.vscode/
+node_modules/
+.DS_Store
+Thumbs.db
+
+# materiały z zajęć (prawa autorskie prowadzących) — nie publikujemy
+*.pdf

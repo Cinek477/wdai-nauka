@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fiszki — WDAI nauka</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/core.js" defer></script>
+    <script src="js/data/m1.js" defer></script>
+    <script src="js/data/m2.js" defer></script>
+    <script src="js/data/m3.js" defer></script>
+    <script src="js/data/m4.js" defer></script>
+    <script src="js/data/m6.js" defer></script>
+    <script src="js/data/m7.js" defer></script>
+    <script src="js/data/l3.js" defer></script>
+    <script src="js/pages/fiszki.js" defer></script>
+  </head>
+  <body data-page="fiszki">
+    <div class="page">
+      <header class="site-header" id="site-header"></header>
+      <nav class="site-nav" id="site-nav" aria-label="Główna nawigacja"></nav>
+      <main class="site-main" id="main">
+        <div class="container">
+          <h1>Fiszki</h1>
+          <form class="row card" id="filters" aria-label="Ustawienia fiszek">
+            <label for="f-mod">Moduł</label>
+            <select id="f-mod"></select>
+            <fieldset class="row" style="border:0;margin:0;padding:0">
+              <legend class="sr-only">Tryb</legend>
+              <label class="row" style="gap:6px"><input type="radio" name="mode" value="all" checked> wszystkie</label>
+              <label class="row" style="gap:6px"><input type="radio" name="mode" value="nie"> tylko „nie umiem”</label>
+            </fieldset>
+            <button type="button" class="btn" id="shuffle">Tasuj</button>
+            <strong class="spacer" id="pos" aria-live="polite"></strong>
+          </form>
+
+          <div class="flash-wrap">
+            <button class="flashcard" id="card" aria-live="polite">
+              <div class="flash-face"><span class="tag" id="f-tag"></span><span class="q" id="f-q"></span><span class="flash-hint">kliknij albo naciśnij spację</span></div>
+              <div class="flash-face flash-back"><span class="tag" style="background:rgba(255,255,255,.18);color:#fff">ODPOWIEDŹ</span><span class="q" id="f-a"></span></div>
+            </button>
+          </div>
+
+          <div class="row" style="justify-content:center">
+            <button class="btn" id="prev">← Poprzednia</button>
+            <button class="btn btn-bad" id="no">Nie umiem</button>
+            <button class="btn btn-ok" id="yes">Umiem</button>
+            <button class="btn" id="next">Następna →</button>
+          </div>
+          <p class="muted" style="text-align:center" id="summary"></p>
+          <p class="muted" style="text-align:center;font-size:.85rem">Skróty: spacja — odwróć, ← → — poprzednia/następna, 1 — nie umiem, 2 — umiem.</p>
+        </div>
+      </main>
+      <footer class="site-footer">WDAI — nauka · 2026/27</footer>
+    </div>
+  </body>
+</html>
