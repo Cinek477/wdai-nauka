@@ -290,6 +290,25 @@ select, input[type="text"], input[type="search"], input[type="number"], input[ty
 .toc { font-size: 0.9rem; display: flex; flex-direction: column; gap: 6px; }
 .toc a { text-decoration: none; }
 .toc ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.toc details > ol { margin-top: 8px; }
+.toc summary {
+  list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-weight: 700; padding: 4px 0;
+}
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary::after { content: "▾"; color: var(--muted); transition: transform 0.2s ease; }
+.toc details:not([open]) summary::after { transform: rotate(-90deg); }
+
+/* zwinięty spis: kolumna kurczy się do przycisku, treść lekcji dostaje miejsce */
+@media (min-width: 1280px) {
+  .lesson-layout:has(#toc-details:not([open])) { grid-template-columns: minmax(0, 1fr) auto; }
+}
+.toc details:not([open]) summary {
+  padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface); font-size: 0.85rem; white-space: nowrap; cursor: pointer;
+}
+/* gdy spis jest zwinięty, kontener lekcji może być szerszy */
+.container:has(#toc-details:not([open])) { max-width: 1180px; }
 
 .topic-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .topic-list label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
@@ -461,3 +480,41 @@ details > *:not(summary) { margin-top: 8px; }
 
 .form-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 .form-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
+
+/* ---------- 14. Ściąga ---------- */
+[hidden] { display: none !important; }
+
+.chip {
+  display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--border-strong); border-radius: 999px;
+  background: var(--surface); color: var(--text); font-size: 0.85rem; text-decoration: none; cursor: pointer;
+}
+.chip:hover { background: var(--surface-2); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+[data-theme="dark"] .chip[aria-pressed="true"] { color: #0e1714; }
+
+.ref-toolbar { display: flex; flex-direction: column; gap: 12px; }
+.ref-cats { gap: 6px; }
+
+.ref-cat { scroll-margin-top: 80px; }
+.ref-items { display: flex; flex-direction: column; gap: 12px; }
+.ref-item {
+  display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr);
+  scroll-margin-top: 80px;
+}
+@media (min-width: 900px) { .ref-item { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); } }
+.ref-info { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ref-tag { font-size: 1.05rem; }
+.ref-tag code { font-size: 1rem; background: var(--t-html-soft); color: var(--t-html); padding: 2px 8px; }
+.ref-attrs { font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.ref-code { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ref-code pre.code { font-size: 0.8rem; padding: 12px; }
+.ref-preview { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 0.9rem; }
+.ref-preview iframe { width: 100%; min-height: 160px; border: 1px solid var(--border); border-radius: 6px; background: #fff; resize: vertical; }
+
+.kind { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+.kind-blok { background: var(--t-css-soft); color: var(--t-css); }
+.kind-linia { background: var(--t-js-soft); color: var(--t-js); }
+.kind-pusty { background: var(--t-bs-soft); color: var(--t-bs); }
+.kind-head { background: var(--t-gen-soft); color: var(--t-gen); }
+.kind-atrybut { background: var(--t-server-soft); color: var(--t-server); }

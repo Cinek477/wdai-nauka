@@ -79,8 +79,10 @@ WDAI.ready(() => {
     <div class="lesson-layout">
       <div>${m.topics.map(topicHtml).join("")}</div>
       <aside class="toc" aria-label="Spis treści">
-        <strong>Na tej stronie</strong>
-        <ol>${m.topics.map((t) => `<li><a href="#${t.id}">${W.esc(t.title)}</a></li>`).join("")}</ol>
+        <details id="toc-details" ${localStorage.getItem("wdai:toc") === "closed" ? "" : "open"}>
+          <summary>Na tej stronie</summary>
+          <ol>${m.topics.map((t) => `<li><a href="#${t.id}">${W.esc(t.title)}</a></li>`).join("")}</ol>
+        </details>
       </aside>
     </div>
 
@@ -139,6 +141,11 @@ WDAI.ready(() => {
   root.addEventListener("mouseout", (e) => {
     const item = e.target.closest(".legend [data-mk]");
     if (item && !item.contains(e.relatedTarget)) mark(item, false);
+  });
+
+  /* --- zwijany spis treści: zapamiętaj stan --- */
+  W.$("#toc-details").addEventListener("toggle", (e) => {
+    try { localStorage.setItem("wdai:toc", e.target.open ? "open" : "closed"); } catch { /* brak dostępu */ }
   });
 
   /* --- piaskownice ładowane dopiero przy przewinięciu --- */

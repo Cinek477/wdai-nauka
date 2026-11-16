@@ -225,6 +225,8 @@ window.WDAI = window.WDAI || { modules: [] };
 
     nav.innerHTML = `<ul>
       ${link("index.html", "Start", page === "home")}
+      <li class="nav-label">ŚCIĄGI</li>
+      ${link("sciaga.html", "Ściąga HTML", page === "sciaga-html")}
       <li class="nav-label">PRZEWODNIKI</li>${guides}
       <li class="nav-label">MODUŁY</li>${mods}
       <li class="nav-label">ĆWICZ</li>
