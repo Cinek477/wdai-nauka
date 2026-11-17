@@ -557,5 +557,23 @@ details > *:not(summary) { margin-top: 8px; }
 .ac-list code { background: none; padding: 0; color: #fff; font-size: 0.85rem; }
 .ac-kind { justify-self: end; color: #9aa0aa; font-size: 0.7rem; }
 .ac-desc { grid-column: 1 / -1; color: #b9bec7; font-size: 0.75rem; }
-.ac-list li:not([aria-selected="true"]) .ac-desc { display: none; }
 .pg-hints input { accent-color: var(--accent); }
+
+/* „Jak zrobić…?” w ściądze CSS */
+#goals-details > summary { cursor: pointer; list-style: none; margin-bottom: 12px; }
+#goals-details > summary::-webkit-details-marker { display: none; }
+#goals-details > summary::before { content: "▾ "; color: var(--muted); }
+#goals-details:not([open]) > summary::before { content: "▸ "; }
+.goals { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.goal { display: flex; flex-direction: column; gap: 8px; padding: 14px; }
+.goal h3 { font-size: 1rem; }
+.goal pre.code { font-size: 0.78rem; padding: 10px 12px; border-radius: 8px; flex: 1; }
+.goal-see { font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.goal-see a { text-decoration: none; }
+.flash-item { outline: 3px solid var(--accent); outline-offset: 3px; transition: outline-color 1s; }
+
+/* ściąga JS */
+.ref-js .ref-tag code { background: var(--t-js-soft); color: var(--t-js); }
+.kind-skladnia { background: var(--t-js-soft); color: var(--t-js); }
+.kind-metoda { background: var(--t-css-soft); color: var(--t-css); }
+.kind-globalne { background: var(--t-server-soft); color: var(--t-server); }

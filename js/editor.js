@@ -16,6 +16,9 @@
   const PAIRS = { "(": ")", "[": "]", "{": "}", '"': '"', "'": "'", "`": "`" };
   const CLOSERS = new Set([")", "]", "}", '"', "'", "`"]);
 
+  // małe litery bez polskich znaków: „Odstęp” → „odstep”
+  const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ł/g, "l");
+
   const enabled = () => {
     try { return localStorage.getItem("wdai:hints") !== "off"; } catch { return true; }
   };
@@ -74,14 +77,29 @@
         const prop = decl.slice(0, colon).trim();
         const values = H().css.props[prop];
         if (values) {
+          const vInfo = H().css.valueInfo || {};
           const prefix = (decl.slice(colon + 1).match(/[\w-#.()$"]*$/) || [""])[0];
-          return { prefix, items: values.map((v) => ({ label: v.replace(CARET, "…"), kind: "wartość", desc: prop, insert: v })), force: /:\s*$/.test(decl) };
+          return {
+            prefix,
+            items: values.map((v) => ({ label: v.replace(CARET, "…"), kind: "wartość", desc: vInfo[v] ? `${vInfo[v]}` : prop, insert: v })),
+            force: /:\s*$/.test(decl),
+          };
         }
         return null;
       }
       if (colon === -1) {
-        const prefix = (decl.match(/[\w-]*$/) || [""])[0];
-        return { prefix, items: Object.keys(H().css.props).map((p) => ({ label: p, kind: "właściwość", desc: H().css.props[p].slice(0, 3).join(" | "), insert: `${p}: ${CARET};` })) };
+        const info = H().css.info || {};
+        // prefiks może być polskim słowem (np. „odstęp”) — szukamy też po słowach kluczowych
+        const prefix = (decl.match(/[\p{L}\w-]*$/u) || [""])[0];
+        return {
+          prefix,
+          items: Object.keys(H().css.props).map((p) => ({
+            label: p, kind: "właściwość",
+            desc: info[p]?.[0] || H().css.props[p].slice(0, 3).join(" | "),
+            keys: info[p]?.[1] || "",
+            insert: `${p}: ${CARET};`,
+          })),
+        };
       }
     }
     const ps = clean.match(/[\w)\]*-]:(:?[\w-]*)$/);
@@ -210,13 +228,18 @@
       if (!enabled() || !W.hints) return close();
       const ctx = contextFor(getLang(), before());
       if (!ctx) return close();
-      const p = ctx.prefix.toLowerCase();
+      const p = norm(ctx.prefix);
       if (!p && !ctx.force && !forceOpen) return close();
-      const starts = ctx.items.filter((it) => it.label.toLowerCase().startsWith(p));
-      const contains = p ? ctx.items.filter((it) => !it.label.toLowerCase().startsWith(p) && it.label.toLowerCase().includes(p)) : [];
+      const starts = ctx.items.filter((it) => norm(it.label).startsWith(p));
+      const contains = p ? ctx.items.filter((it) => norm(it.label).includes(p)) : [];
+      // polskie słowa kluczowe (od 2 liter): „odstep” → margin, padding, gap…
+      const byWord = p.length >= 2
+        ? ctx.items.filter((it) => it.keys && norm(it.keys).split(" ").some((k) => k.startsWith(p)))
+            .sort((a, b) => a.label.length - b.label.length)        // najpierw ogólne: gap, margin, padding
+        : [];
       const seen = new Set();
-      items = [...starts, ...contains].filter((it) => !seen.has(it.label) && seen.add(it.label)).slice(0, 9);
-      if (!items.length || (items.length === 1 && items[0].label.toLowerCase() === p && !items[0].insert.includes(CARET))) return close();
+      items = [...starts, ...contains, ...byWord].filter((it) => !seen.has(it.label) && seen.add(it.label)).slice(0, 9);
+      if (!items.length || (items.length === 1 && norm(items[0].label) === p && !items[0].insert.includes(CARET))) return close();
       prefixLen = ctx.prefix.length;
       active = 0;
       render();

@@ -2,7 +2,17 @@
    Którą ściągę pokazać, mówi <body data-ref="html|css">. */
 WDAI.ready(() => {
   const W = WDAI;
-  const type = document.body.dataset.ref === "css" ? "css" : "html";
+  const type = ["css", "js"].includes(document.body.dataset.ref) ? document.body.dataset.ref : "html";
+
+  // podgląd JS: console.log trafia do ramki pod przykładem; type="module" pozwala na await
+  const jsDoc = (it) => `${it.html || ""}
+    <pre id="__out" style="margin:8px 0 0;padding:8px;background:#1b1d23;color:#c3e88d;font:12px ui-monospace,monospace;white-space:pre-wrap;border-radius:6px;min-height:1.5em"></pre>
+    <script>(function(){var o=document.getElementById("__out");function s(x){if(typeof x==="string")return x;try{return JSON.stringify(x)}catch(e){return String(x)}}
+    function w(p){return function(){o.textContent+=p+[].map.call(arguments,s).join(" ")+"\\n"}}
+    console.log=w("› ");console.table=w("› ");console.info=w("› ");console.warn=w("⚠ ");console.error=w("✗ ");
+    addEventListener("error",function(e){o.textContent+="✗ "+e.message+"\\n"});
+    addEventListener("unhandledrejection",function(e){o.textContent+="✗ "+(e.reason&&e.reason.message||e.reason)+"\\n"})})()<\/script>
+    <script type="module">${it.example}<\/script>`;
 
   const CONFIG = {
     html: {
@@ -31,6 +41,20 @@ WDAI.ready(() => {
       chips: [["selektor", "Selektory"], ["wlasciwosc", "Właściwości"], ["wartosc", "Wartości i funkcje"], ["regula", "Reguły @"], ["jednostka", "Jednostki"]],
       // .b = szare pudełko używane w przykładach
       doc: (it) => `<style>.b{background:#e3f1ef;border:1px solid #2a9d8f;padding:6px 10px;border-radius:4px}</style><style>${it.example}</style>${it.html || ""}`,
+      goals: W.refCssGoals,
+    },
+    js: {
+      data: W.refJs,
+      lang: "js",
+      kinds: {
+        skladnia: "składnia",
+        metoda: "metoda",
+        wlasciwosc: "właściwość",
+        globalne: "obiekt / funkcja globalna",
+      },
+      chips: [["skladnia", "Składnia"], ["metoda", "Metody"], ["wlasciwosc", "Właściwości"], ["globalne", "Obiekty i funkcje globalne"]],
+      doc: jsDoc,
+      goals: W.refJsGoals,
     },
   };
   const cfg = CONFIG[type];
@@ -66,7 +90,7 @@ WDAI.ready(() => {
         <div class="syntax">
           <div class="syntax-head"><span class="lang">${cfg.lang}</span><button class="btn btn-sm spacer" data-copy="${it.key}">Kopiuj</button></div>
           ${W.codeBlock(it.example, cfg.lang)}
-          ${type === "css" && it.html && it.preview !== false ? `<details class="ref-html"><summary>HTML przykładu</summary>${W.codeBlock(it.html, "html")}</details>` : ""}
+          ${type !== "html" && it.html && it.preview !== false ? `<details class="ref-html"><summary>HTML przykładu</summary>${W.codeBlock(it.html, "html")}</details>` : ""}
         </div>
         ${it.preview === false ? "" : `<details class="ref-preview" data-preview="${it.key}"><summary>Podgląd na żywo</summary></details>`}
       </div>
@@ -78,6 +102,39 @@ WDAI.ready(() => {
       <p class="muted" style="margin:4px 0 14px">${W.fmt(cat.intro)}</p>
       <div class="ref-items">${items.filter((it) => it.cat === cat).map(itemHtml).join("")}</div>
     </section>`).join("");
+
+  /* --- „Jak zrobić…?” (tylko ściąga CSS) --- */
+  const goalsBox = W.$("#ref-goals");
+  if (goalsBox && cfg.goals) {
+    const anchorOf = (tag) => items.find((x) => x.tag === tag)?.anchor;
+    goalsBox.innerHTML = `
+      <details open id="goals-details">
+        <summary><h2 style="display:inline">Jak zrobić…?</h2>
+          <span class="muted" style="font-weight:400;font-size:.9rem"> — ${type === "css" ? "nie znasz nazwy właściwości?" : "nie wiesz, jakiej metody użyć?"} Zacznij od tego, co chcesz osiągnąć.</span></summary>
+        <div class="goals">
+          ${cfg.goals.map((g) => `
+            <article class="goal card" data-goal="${W.esc(g.goal.toLowerCase())}">
+              <h3>${W.esc(g.goal)}</h3>
+              ${W.codeBlock(g.code, cfg.lang)}
+              <p class="goal-see">Zobacz: ${g.see.map((t) => anchorOf(t)
+                ? `<a href="#${anchorOf(t)}" data-open="${anchorOf(t)}"><code>${W.esc(t)}</code></a>`
+                : `<code>${W.esc(t)}</code>`).join(" ")}</p>
+            </article>`).join("")}
+        </div>
+      </details>`;
+    // kliknięcie w link: pokaż pozycję nawet przy aktywnym filtrze i ją podświetl
+    goalsBox.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-open]");
+      if (!a) return;
+      e.preventDefault();
+      W.$("#ref-q").value = "";
+      W.$('#ref-kinds [data-kind="all"]').click();
+      const el = document.getElementById(a.dataset.open);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.classList.add("flash-item");
+      setTimeout(() => el.classList.remove("flash-item"), 1600);
+    });
+  }
 
   /* --- filtrowanie: fraza + rodzaj --- */
   let kind = "all";
@@ -93,6 +150,8 @@ WDAI.ready(() => {
       sec.hidden = !W.$$(".ref-item", sec).some((el) => !el.hidden);
     });
     W.$("#ref-count").textContent = `Pokazano ${shown} z ${items.length}`;
+    // cele „Jak zrobić…?” też filtrujemy po wpisanej frazie
+    W.$$("[data-goal]").forEach((g) => { g.hidden = !!q && !g.dataset.goal.includes(q) && !g.textContent.toLowerCase().includes(q); });
   }
   W.$("#ref-q").addEventListener("input", filter);
   W.$("#ref-kinds").addEventListener("click", (e) => {

@@ -228,6 +228,7 @@ window.WDAI = window.WDAI || { modules: [] };
       <li class="nav-label">ŚCIĄGI</li>
       ${link("sciaga.html", "Ściąga HTML", page === "sciaga-html")}
       ${link("sciaga-css.html", "Ściąga CSS", page === "sciaga-css")}
+      ${link("sciaga-js.html", "Ściąga JS", page === "sciaga-js")}
       <li class="nav-label">PRZEWODNIKI</li>${guides}
       <li class="nav-label">MODUŁY</li>${mods}
       <li class="nav-label">ĆWICZ</li>
@@ -375,6 +376,7 @@ ${files.js || ""}
     });
     window.addEventListener("message", (e) => {
       if (e.data?.__pg !== id) return;
+      if (e.data.args.join(" ").includes("in-browser Babel")) return;   // techniczne ostrzeżenie Babela — pomijamy
       cons.textContent += `${e.data.type === "log" ? "›" : e.data.type + ":"} ${e.data.args.join(" ")}\n`;
       cons.scrollTop = cons.scrollHeight;
     });

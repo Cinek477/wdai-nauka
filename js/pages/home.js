@@ -65,7 +65,7 @@ WDAI.ready(() => {
 
     <section aria-labelledby="h-mods">
       <div class="row" style="margin-bottom:12px">
-        <h2 id="h-mods">Moduły: HTML, CSS, JavaScript</h2>
+        <h2 id="h-mods">Moduły</h2>
         <label class="spacer muted" for="filter" style="font-size:.9rem">Pokaż</label>
         <select id="filter">
           <option value="all">Wszystkie</option>
