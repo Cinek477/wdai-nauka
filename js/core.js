@@ -39,10 +39,11 @@ window.WDAI = window.WDAI || { modules: [] };
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-  // `kod` -> <code>, **pogrubienie** -> <strong>
+  // `kod` -> <code>, **pogrubienie** -> <strong>, [tekst](adres) -> link (tylko adresy względne i http)
   W.fmt = (s) => W.esc(s)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\(((?:https?:\/\/|[\w-]+\.html|#)[^)\s]*)\)/g, '<a href="$2">$1</a>');
 
   W.$ = (sel, root = document) => root.querySelector(sel);
   W.$$ = (sel, root = document) => [...root.querySelectorAll(sel)];
